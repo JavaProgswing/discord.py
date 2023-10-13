@@ -613,12 +613,15 @@ class Client:
 
         data = await self.http.static_login(token, bot=bot)
         self._connection.user = ClientUser(state=self._connection, data=data)
-        self._application = await self.application_info()
-        if self._connection.application_id is None:
-            self._connection.application_id = self._application.id
+        try:
+            self._application = await self.application_info()
+            if self._connection.application_id is None:
+                self._connection.application_id = self._application.id
 
-        if not self._connection.application_flags:
-            self._connection.application_flags = self._application.flags
+            if not self._connection.application_flags:
+                self._connection.application_flags = self._application.flags
+        except:
+            _log.warning("Application information not initialized, not running as bot.")
 
         await self.setup_hook()
 
